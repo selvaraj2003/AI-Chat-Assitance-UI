@@ -1,0 +1,33 @@
+/* --- Global Scrollbar Design --- */
+
+/* 1. The scrollbar width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* 2. The track (background) */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+/* 3. The thumb (the moving part) */
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3); /* NeuralAI Purple/Blue with transparency */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background 0.3s ease;
+}
+
+/* 4. Hover effect on the thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6); /* Brightens when user interacts */
+}
+
+/* Firefox Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.3) rgba(0, 0, 0, 0.2);
+}

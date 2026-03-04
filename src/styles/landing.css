@@ -1,0 +1,179 @@
+/* 1. Import Poppins Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+:root {
+  --primary: #6366f1;
+  --secondary: #a855f7;
+  /* --bg-black: #3a1414; */
+  --font-main: 'Poppins', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main); /* Global Font Apply */
+}
+
+.landing-wrapper {
+  /* background-color: var(--bg-black); */
+  min-height: 100vh;
+  color: white;
+  overflow: hidden;
+}
+
+/* 2. Navbar Transparency & Blur */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 5%;
+  z-index: 1000;
+  background: transparent;
+  backdrop-filter: blur(15px); /* Frosty Effect */
+}
+
+.nav-logo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* 3. Login & Register Buttons Fixed */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.login-link {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 0.9rem; /* Minimized Size */
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.login-link:hover {
+  opacity: 0.7;
+}
+
+.register-btn {
+  position: relative;
+  background: var(--bg-black);
+  color: white;
+  padding: 8px 20px;
+  font-size: 0.85rem; /* Minimized Size */
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* Animated Gradient Border for Register */
+.register-btn::after {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(45deg, #6366f1, #a855f7, #ec4899);
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 8px;
+  animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Hero Content */
+.hero-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-bg-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+}
+
+.overlay-gradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent, var(--bg-black) 85%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #6366f1, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  margin: 1.5rem auto;
+  color: #a1a1aa;
+  font-size: 1.1rem;
+  max-width: 500px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.main-cta, .secondary-cta {
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.main-cta {
+  background: white;
+  border: none;
+  color: black;
+}
+
+.secondary-cta {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.secondary-cta:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

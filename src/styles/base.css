@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background: #0a0a12;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: #fff;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, button {
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
