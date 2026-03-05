@@ -4,8 +4,14 @@ import { FiPlus, FiTrash2, FiLogOut, FiMic, FiSend } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import api from "../api/axios";
 import "../styles/chat.css";
+import "katex/dist/katex.min.css"; // Required for LaTeX styling
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -20,8 +26,7 @@ export default function Chat() {
   const [localModels, setLocalModels] = useState([]);
   const [cloudModels, setCloudModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState("");
-  const hasLocal = localModels.length > 0;
-  const hasCloud = cloudModels.length > 0;
+
   const models = provider === "local" ? localModels : cloudModels;
 
   useEffect(() => {
@@ -32,24 +37,14 @@ export default function Chat() {
     try {
       const res = await api.get(`/api/ai/models/${prov}`);
       const fetchedModels = res.data.models || [];
-
       if (prov === "local") setLocalModels(fetchedModels);
       else setCloudModels(fetchedModels);
-
-      if (prov === provider && fetchedModels.length === 0) {
-        if (hasLocal) setProvider("local");
-        else if (hasCloud) setProvider("cloud");
-      }
-
       if (prov === provider && fetchedModels.length > 0) {
         setSelectedModel(res.data.default || fetchedModels[0]);
       }
     } catch (e) {
       console.error(e);
-      if (prov === provider) {
-        if (hasLocal) setProvider("local");
-        else if (hasCloud) setProvider("cloud");
-      }
+      toast.error(`Failed to load ${prov} models`);
     }
   };
 
@@ -58,7 +53,6 @@ export default function Chat() {
     loadModels("cloud");
   }, []);
 
-  // Load chat sessions
   useEffect(() => {
     const loadSessions = async () => {
       try {
@@ -75,15 +69,14 @@ export default function Chat() {
         setChats(Object.values(map));
       } catch (e) {
         console.error(e);
+        toast.error("Failed to load chat sessions");
       }
     };
     loadSessions();
   }, []);
 
-  // Load chat history
   useEffect(() => {
     if (!activeSessionId) return;
-
     const loadHistory = async () => {
       try {
         const res = await api.get("/api/ai/history", {
@@ -98,13 +91,12 @@ export default function Chat() {
         setMessages(msgs);
       } catch (e) {
         console.error(e);
+        toast.error("Failed to load chat history");
       }
     };
-
     loadHistory();
   }, [activeSessionId]);
 
-  // Create new chat session
   const createChat = () => {
     const newSessionId = crypto.randomUUID();
     setChats((prev) => [{ session_id: newSessionId, title: "New Chat" }, ...prev]);
@@ -113,12 +105,10 @@ export default function Chat() {
     navigate(`/chat/${newSessionId}`);
   };
 
-  // Delete chat session
   const deleteChat = async (id) => {
     try {
       await api.delete(`/api/ai/history/${id}`);
       setChats((prev) => prev.filter((c) => c.session_id !== id));
-
       if (id === activeSessionId) {
         setActiveSessionId(null);
         setMessages([]);
@@ -126,33 +116,32 @@ export default function Chat() {
       }
     } catch (e) {
       console.error(e);
+      toast.error("Failed to delete chat session");
     }
   };
 
-  // Send message
   const send = async () => {
     if (!input.trim() || !activeSessionId) return;
-
     const userText = input;
     setInput("");
     setLoading(true);
     setMessages((prev) => [...prev, { role: "user", text: userText }]);
-
     try {
-      const res = await api.post("/api/ai/generate", {
+      const res = await api.post(`/api/ai/generate/${provider}`, {
         session_id: activeSessionId,
         prompt: userText,
         model: selectedModel,
       });
       setMessages((prev) => [...prev, { role: "ai", text: res.data.response }]);
-    } catch {
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to generate AI response");
       setMessages((prev) => [...prev, { role: "ai", text: "Something went wrong" }]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Logout
   const logout = () => {
     localStorage.clear();
     navigate("/login");
@@ -164,7 +153,6 @@ export default function Chat() {
         <button className="new-chat" onClick={createChat}>
           <FiPlus /> New Chat
         </button>
-
         <div className="chat-list">
           {chats.map((c) => (
             <div
@@ -202,21 +190,19 @@ export default function Chat() {
                 ))}
               </select>
             )}
-
             <div className="provider">
-              {hasLocal && (
+              {localModels.length > 0 && (
                 <button className={provider === "local" ? "active" : ""} onClick={() => setProvider("local")}>
                   Local
                 </button>
               )}
-              {hasCloud && (
+              {cloudModels.length > 0 && (
                 <button className={provider === "cloud" ? "active" : ""} onClick={() => setProvider("cloud")}>
                   Cloud
                 </button>
               )}
             </div>
           </div>
-
           <button className="logout" onClick={logout}>
             <FiLogOut /> Logout
           </button>
@@ -226,6 +212,8 @@ export default function Chat() {
           {messages.map((m, i) => (
             <div key={i} className={`msg ${m.role}`}>
               <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
                 components={{
                   code({ node, inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || "");
@@ -253,18 +241,15 @@ export default function Chat() {
           <button className="icon">
             <FiPlus />
           </button>
-
           <input
             placeholder="Message AI…"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && send()}
           />
-
           <button className="icon">
             <FiMic />
           </button>
-
           <button className="send" onClick={send}>
             <FiSend />
           </button>
