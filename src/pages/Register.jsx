@@ -1,100 +1,93 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 import "../styles/auth.css";
-import "../styles/app.css";
-
 
 export default function Register() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [email,    setEmail]    = useState("");
+  const [password, setPassword] = useState("");
+  const [loading,  setLoading]  = useState(false);
 
- const submit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const submit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await api.post("/api/auth/register", { username, email, password });
+      toast.success(res.data.message || "Account created!");
+      setTimeout(() => navigate("/login"), 1200);
+    } catch (err) {
+      const msg =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        "Registration failed. Please try again.";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  try {
-    const res = await api.post("/api/auth/register", {
-      username,
-      email,
-      password,
-    });
-
-    toast.success(res.data.message || "Account created successfully!");
-
-    setTimeout(() => navigate("/login"), 1200);
-  } catch (err) {
-    const errorMsg =
-      err.response?.data?.detail ||
-      err.response?.data?.message ||
-      "Registration failed. Try again.";
-
-    toast.error(errorMsg);
-  } finally {
-    setLoading(false);
-  }
-};
   return (
-    <div className="auth-page">
-      <div className="auth-bg-container">
-        <div className="auth-overlay"></div>
-        <img 
-          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2000" 
-          alt="AI Background" 
-          className="auth-bg-image"
-        />
-      </div>
+    <div className="auth-root">
+      <div className="auth-ring" />
+      <div className="auth-ring" />
+      <div className="auth-ring" />
+      <div className="auth-orb auth-orb-1" />
+      <div className="auth-orb auth-orb-2" />
 
       <div className="auth-card">
         <div className="auth-header">
-          <h2 className="auth-title">Join Neural<span className="gradient-text-anim">AI</span></h2>
-          <p className="auth-subtitle">Create your account to start chatting</p>
+          <span className="auth-logo">NEURAL<span>X</span></span>
+          <h2 className="auth-title">Create account</h2>
+          <p className="auth-subtitle">Join the next generation of AI chat</p>
         </div>
 
         <form className="auth-form" onSubmit={submit}>
-          <div className="input-field">
+          <div className="af-field">
             <input
               type="text"
               required
               minLength={3}
-              placeholder=" " 
+              placeholder=" "
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <label>Username</label>
           </div>
 
-          <div className="input-field">
+          <div className="af-field">
             <input
               type="email"
               required
-              placeholder=" " 
+              placeholder=" "
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <label>Email Address</label>
+            <label>Email address</label>
           </div>
 
-          <div className="input-field">
+          <div className="af-field">
             <input
               type="password"
               required
               minLength={8}
-              placeholder=" " 
+              placeholder=" "
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <label>Password</label>
+            <label>Password (min. 8 chars)</label>
           </div>
 
-          <button className="auth-main-btn" disabled={loading}>
-            {loading ? "Initializing..." : "Register Now"}
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? "Creating account…" : "Register →"}
           </button>
         </form>
 
-        <div className="auth-footer">
-          Already have an account? <span onClick={() => navigate('/login')}>Login</span>
+        <div className="auth-foot">
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>Sign in</span>
         </div>
       </div>
     </div>

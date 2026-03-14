@@ -1,25 +1,83 @@
-* {
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+:root {
+  /* Core palette */
+  --bg-void:      #04040a;
+  --bg-deep:      #070711;
+  --bg-surface:   #0d0d1a;
+  --bg-raised:    #12121f;
+  --bg-elevated:  #191928;
+
+  /* Accent — electric cyan */
+  --accent:       #00e5ff;
+  --accent-dim:   rgba(0, 229, 255, 0.15);
+  --accent-glow:  rgba(0, 229, 255, 0.35);
+
+  /* Secondary — violet */
+  --violet:       #7c3aed;
+  --violet-dim:   rgba(124, 58, 237, 0.2);
+
+  /* Text */
+  --text-1:  #f0f0ff;
+  --text-2:  #9090b8;
+  --text-3:  #5a5a80;
+
+  /* Borders */
+  --border:       rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(0, 229, 255, 0.3);
+
+  /* Fonts */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Outfit', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 html, body {
   height: 100%;
-  background: #0a0a12;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-  color: #fff;
+  background: var(--bg-void);
+  font-family: var(--font-body);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-button {
-  font-family: inherit;
-}
+button { font-family: inherit; cursor: pointer; }
+input, button { outline: none; }
+a { text-decoration: none; color: inherit; }
 
-input, button {
-  outline: none;
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.2);
+  border-radius: 99px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.45);
+}
+* { scrollbar-width: thin; scrollbar-color: rgba(0,229,255,.2) transparent; }
 
-a {
-  text-decoration: none;
-  color: inherit;
+/* ── Toast override ──────────────────────────────────────── */
+.nx-toast {
+  background: var(--bg-raised) !important;
+  border: 1px solid var(--border) !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.88rem !important;
+  border-radius: var(--r-md) !important;
 }

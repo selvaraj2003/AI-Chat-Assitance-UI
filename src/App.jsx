@@ -17,15 +17,12 @@ export default function App() {
         theme="dark"
         pauseOnHover
         draggable
+        toastClassName="nx-toast"
       />
-
       <Routes>
-        {/* Public routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Protected routes */}
         <Route
           path="/chat"
           element={
@@ -34,7 +31,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/chat/:sessionId"
           element={
