@@ -13,7 +13,10 @@ import api from "../api/axios";
 import { useModels } from "../hooks/useModels";
 import "../styles/chat.css";
 
-/* ── Markdown code renderer ──────────────────────────────── */
+function getErrorMessage(err, fallback = "Something went wrong") {
+  return err?.response?.data?.detail || err?.message || fallback;
+}
+
 function CodeBlock({ node, inline, className, children, ...props }) {
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
@@ -33,7 +36,6 @@ function CodeBlock({ node, inline, className, children, ...props }) {
 
 const MD_COMPONENTS = { code: CodeBlock };
 
-/* ── Component ───────────────────────────────────────────── */
 export default function Chat() {
   const navigate = useNavigate();
   const { sessionId } = useParams();
@@ -46,15 +48,12 @@ export default function Chat() {
   const [loading,         setLoading]         = useState(false);
   const [sidebarOpen,     setSidebarOpen]     = useState(false);
 
-  const { models, localModels, cloudModels, provider, setProvider, selectedModel, setSelectedModel } =
-    useModels();
+  const { cloudModels, selectedModel, setSelectedModel } = useModels();
 
-  /* Auto-scroll */
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  /* Load all sessions */
   useEffect(() => {
     (async () => {
       try {
@@ -68,13 +67,12 @@ export default function Chat() {
             };
         });
         setChats(Object.values(map));
-      } catch {
-        toast.error("Failed to load sessions");
+      } catch (err) {
+        toast.error(getErrorMessage(err, "Failed to load sessions"));
       }
     })();
   }, []);
 
-  /* Load history when session changes */
   useEffect(() => {
     if (!activeSessionId) return;
     (async () => {
@@ -88,20 +86,12 @@ export default function Chat() {
           msgs.push({ role: "ai",   text: c.response });
         });
         setMessages(msgs);
-      } catch {
-        toast.error("Failed to load chat history");
+      } catch (err) {
+        toast.error(getErrorMessage(err, "Failed to load chat history"));
       }
     })();
   }, [activeSessionId]);
 
-  /* Sync model list when provider changes */
-  useEffect(() => {
-    const list = provider === "local" ? localModels : cloudModels;
-    if (list.length > 0 && !list.includes(selectedModel))
-      setSelectedModel(list[0]);
-  }, [provider]);
-
-  /* Actions */
   const createChat = () => {
     const id = crypto.randomUUID();
     setChats((p) => [{ session_id: id, title: "New chat" }, ...p]);
@@ -121,8 +111,8 @@ export default function Chat() {
         setMessages([]);
         navigate("/chat");
       }
-    } catch {
-      toast.error("Failed to delete session");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Failed to delete session"));
     }
   };
 
@@ -139,14 +129,13 @@ export default function Chat() {
     setLoading(true);
     setMessages((p) => [...p, { role: "user", text }]);
     try {
-      const res = await api.post(`/api/ai/generate/${provider}`, {
+      const res = await api.post("/api/ai/generate/cloud", {
         session_id: activeSessionId,
         prompt: text,
         model: selectedModel,
       });
       setMessages((p) => [...p, { role: "ai", text: res.data.response }]);
 
-      // Update title of the first message
       setChats((p) =>
         p.map((c) =>
           c.session_id === activeSessionId && c.title === "New chat"
@@ -154,9 +143,10 @@ export default function Chat() {
             : c
         )
       );
-    } catch {
-      toast.error("Failed to generate response");
-      setMessages((p) => [...p, { role: "ai", text: "Something went wrong. Please try again." }]);
+    } catch (err) {
+      const msg = getErrorMessage(err, "Failed to generate response");
+      toast.error(msg);
+      setMessages((p) => [...p, { role: "ai", text: msg }]);
     } finally {
       setLoading(false);
     }
@@ -165,9 +155,7 @@ export default function Chat() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (input.trim()) {
-        send();
-      }
+      if (input.trim()) send();
     }
   };
 
@@ -176,11 +164,9 @@ export default function Chat() {
     navigate("/login");
   };
 
-  /* ── Render ───────────────────────────────────────────── */
   return (
     <div className="chat-root">
 
-      {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
           style={{ position: "fixed", inset: 0, zIndex: 199, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
@@ -188,10 +174,9 @@ export default function Chat() {
         />
       )}
 
-      {/* ── Sidebar ── */}
       <aside className={`chat-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="chat-sidebar-top">
-          <div className="sidebar-logo">NEURAL<span>X</span></div>
+          <div className="sidebar-logo">Flux<span>Ops</span></div>
           <button className="new-chat-btn" onClick={createChat}>
             <FiPlus /> New chat
           </button>
@@ -226,10 +211,8 @@ export default function Chat() {
         </div>
       </aside>
 
-      {/* ── Main ── */}
       <div className="chat-main">
 
-        {/* Header */}
         <header className="chat-header">
           <div className="chat-model-row">
             <button
@@ -240,40 +223,20 @@ export default function Chat() {
               {sidebarOpen ? <FiX /> : <FiMenu />}
             </button>
 
-            {models.length > 0 && (
+            {cloudModels.length > 0 && (
               <select
                 className="model-select"
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
               >
-                {models.map((m) => (
+                {cloudModels.map((m) => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>
             )}
-
-            <div className="provider-toggle">
-              {localModels.length > 0 && (
-                <button
-                  className={`provider-btn ${provider === "local" ? "active" : ""}`}
-                  onClick={() => setProvider("local")}
-                >
-                  Local
-                </button>
-              )}
-              {cloudModels.length > 0 && (
-                <button
-                  className={`provider-btn ${provider === "cloud" ? "active" : ""}`}
-                  onClick={() => setProvider("cloud")}
-                >
-                  Cloud
-                </button>
-              )}
-            </div>
           </div>
         </header>
 
-        {/* Messages */}
         <div className="chat-messages">
           {messages.length === 0 && !loading && (
             <div className="chat-empty">
@@ -299,20 +262,29 @@ export default function Chat() {
 
           {loading && (
             <div className="chat-typing">
-              <span /><span /><span />
+              <div className="chat-typing-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2a5 5 0 0 1 5 5c0 1-.3 2-.8 2.8A5 5 0 0 1 17 14a5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 .8-2.7A5 5 0 0 1 7 7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3c0 .8.3 1.5.8 2l.7.8-.7.6A3 3 0 0 0 9 14a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-.8-2.1l-.7-.7.7-.7A3 3 0 0 0 15 7a3 3 0 0 0-3-3z"/>
+                </svg>
+              </div>
+              <div className="chat-typing-bars">
+                <span /><span /><span /><span /><span />
+                <span /><span /><span /><span />
+              </div>
+              <span className="chat-typing-label">thinking…</span>
             </div>
           )}
 
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
         <div className="chat-input-wrap">
           <div className="chat-input-inner">
             <button className="ci-btn" title="Attach">
               <FiPlus />
             </button>
-            <input
+            <textarea
+              rows={1}
               placeholder={activeSessionId ? "Message AI…" : "Select or create a chat first"}
               value={input}
               disabled={!activeSessionId}

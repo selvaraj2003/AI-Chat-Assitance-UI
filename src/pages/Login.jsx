@@ -41,7 +41,7 @@ export default function Login() {
 
       <div className="auth-card">
         <div className="auth-header">
-          <span className="auth-logo">NEURAL<span>X</span></span>
+          <span className="auth-logo">Flux<span>Ops</span></span>
           <h2 className="auth-title">Welcome back</h2>
           <p className="auth-subtitle">Sign in to your neural workspace</p>
         </div>

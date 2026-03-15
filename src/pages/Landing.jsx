@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/landing.css";
 
-/* ── Particle network canvas ─────────────────────────────── */
+/* Particle network canvas */
 function ParticleCanvas() {
   const ref = useRef(null);
 
@@ -104,17 +104,17 @@ function ParticleCanvas() {
   return <canvas ref={ref} className="lp-canvas" />;
 }
 
-/* ── Features data ───────────────────────────────────────── */
+/* Features data  */
 const FEATURES = [
-  { icon: "⚡", title: "Lightning Fast",     desc: "Sub-second response times powered by optimized neural inference pipelines." },
-  { icon: "🧠", title: "Multi-Model",        desc: "Switch between local and cloud models seamlessly within the same conversation." },
-  { icon: "🔒", title: "Private by Design",  desc: "Your conversations stay yours. Local model support means zero data leaves your machine." },
-  { icon: "📐", title: "Markdown & LaTeX",   desc: "Full markdown rendering, syntax-highlighted code blocks, and beautiful math equations." },
-  { icon: "🌐", title: "Session Memory",     desc: "Persistent conversation history across sessions so you never lose context." },
-  { icon: "🎨", title: "Customisable",       desc: "Choose your AI provider, model, and preferences on the fly." },
+  { icon: "⚙️", title: "Automated Workflows", desc: "Streamline CI/CD pipelines and automate deployment tasks with intelligent orchestration." },
+  { icon: "🔍", title: "Smart Monitoring", desc: "AI-driven insights for real-time infrastructure health, anomaly detection, and alerting." },
+  { icon: "🔒", title: "Secure by Default", desc: "Continuous security checks, vulnerability scanning, and compliance enforcement." },
+  { icon: "📊", title: "Analytics & Reporting", desc: "Generate actionable reports on build, test, and deployment metrics with advanced analytics." },
+  { icon: "🤖", title: "ChatOps Integration", desc: "Collaborate and control your DevOps processes directly from chat interfaces." },
+  { icon: "🛠️", title: "Customizable Automation", desc: "Adapt workflows, triggers, and AI recommendations to fit your team's needs." },
 ];
 
-/* ── Component ───────────────────────────────────────────── */
+/* Component  */
 export default function Landing() {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
@@ -135,7 +135,7 @@ export default function Landing() {
       {/* Navbar */}
       <nav className={`lp-nav ${scrolled ? "scrolled" : ""}`}>
         <div className="lp-logo">
-          NEURAL<span className="lp-logo-x">X</span>
+          Flux<span className="lp-logo-x">Ops</span>
           <span className="lp-logo-dot" />
         </div>
         <div className="lp-nav-links">
@@ -152,17 +152,17 @@ export default function Landing() {
       <section className="lp-hero">
         <div className="lp-badge">
           <span className="lp-badge-blink" />
-          Now live · v2.0
+          Welcome to FluxOps - AI-Powered DevOps Intelligence
         </div>
 
         <h1 className="lp-title">
-          Intelligence<br />
-          <span className="lp-title-line2">Beyond Human</span>
+            Intelligent<br />
+            <span className="lp-title-line2">DevOps</span>
         </h1>
 
         <p className="lp-subtitle">
-          The next generation of conversational AI. Local or cloud, fast, private,
-          and infinitely capable — built for those who demand more.
+          Empower your DevOps journey with AI-driven automation, secure cloud workflows,
+          and real-time insights for teams that demand reliability and speed.
         </p>
 
         <div className="lp-cta-group">
@@ -201,7 +201,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="lp-footer">
-        © {new Date().getFullYear()} NeuralX · Built with intent
+        © {new Date().getFullYear()} FluxOps · Built with intent
       </footer>
     </div>
   );
