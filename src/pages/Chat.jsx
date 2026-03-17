@@ -17,7 +17,7 @@ function getErrorMessage(err, fallback = "Something went wrong") {
   return err?.response?.data?.detail || err?.message || fallback;
 }
 
-function CodeBlock({ node, inline, className, children, ...props }) {
+function CodeBlock({inline, className, children, ...props }) {
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
     <SyntaxHighlighter
