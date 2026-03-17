@@ -36,13 +36,13 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
 
-    if (status === 403) {
-      console.warn("CORS or permission error – check server CORS config.");
-    }
+    // if (status === 403) {
+    //   console.warn("CORS or permission error – check server CORS config.");
+    // }
 
-    if (!error.response) {
-      console.error("Network / CORS error – no response received:", error.message);
-    }
+    // if (!error.response) {
+    //   console.error("Network / CORS error – no response received:", error.message);
+    // }
 
     return Promise.reject(error);
   }
