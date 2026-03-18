@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../api/axios";
+import AIBackground from "../components/AIBackground";
 import "../styles/auth.css";
 
 export default function Register() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
-  const [email,    setEmail]    = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading,  setLoading]  = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'dark';
+  });
+
+  useEffect(() => {
+    // Apply theme to document
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -31,15 +40,28 @@ export default function Register() {
 
   return (
     <div className="auth-root">
-      <div className="auth-ring" />
-      <div className="auth-ring" />
-      <div className="auth-ring" />
-      <div className="auth-orb auth-orb-1" />
-      <div className="auth-orb auth-orb-2" />
+      {/* AI Background */}
+      <AIBackground theme={theme} intensity="medium" />
+      <div className="auth-grain" />
+      
+      {/* Theme Toggle */}
+      <button 
+        className="theme-toggle" 
+        onClick={() => {
+          const newTheme = theme === 'dark' ? 'light' : 'dark';
+          setTheme(newTheme);
+          localStorage.setItem('theme', newTheme);
+        }}
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
 
       <div className="auth-card">
         <div className="auth-header">
-          <span className="auth-logo">Flux<span>Ops</span></span>
+          <span className="auth-logo">
+            Gen<span>Ops</span>
+          </span>
           <h2 className="auth-title">Create account</h2>
           <p className="auth-subtitle">Join the next generation of AI chat</p>
         </div>

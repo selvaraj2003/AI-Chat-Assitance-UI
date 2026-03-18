@@ -166,6 +166,17 @@ export default function Chat() {
 
   return (
     <div className="chat-root">
+      <button 
+        className="theme-toggle" 
+        onClick={() => {
+          const newTheme = theme === 'dark' ? 'light' : 'dark';
+          setTheme(newTheme);
+          localStorage.setItem('theme', newTheme);
+        }}
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
 
       {sidebarOpen && (
         <div
@@ -176,7 +187,7 @@ export default function Chat() {
 
       <aside className={`chat-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="chat-sidebar-top">
-          <div className="sidebar-logo">Flux<span>Ops</span></div>
+          <div className="sidebar-logo">Gen<span>Ops</span></div>
           <button className="new-chat-btn" onClick={createChat}>
             <FiPlus /> New chat
           </button>

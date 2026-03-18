@@ -1,110 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AIBackground from "../components/AIBackground";
 import "../styles/landing.css";
 
-/* Particle network canvas */
-function ParticleCanvas() {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const canvas = ref.current;
-    const ctx = canvas.getContext("2d");
-    let raf;
-
-    const resize = () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const ACCENT = { r: 0, g: 229, b: 255 };
-    const N = Math.min(Math.floor(window.innerWidth / 14), 90);
-
-    const particles = Array.from({ length: N }, () => ({
-      x:  Math.random() * canvas.width,
-      y:  Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      r:  Math.random() * 1.6 + 0.6,
-    }));
-
-    const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
-    const onMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
-    window.addEventListener("mousemove", onMove);
-
-    const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Mouse repulsion
-      particles.forEach((p) => {
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const d  = Math.hypot(dx, dy);
-        if (d < 120) {
-          p.vx += (dx / d) * 0.04;
-          p.vy += (dy / d) * 0.04;
-        }
-        p.vx *= 0.99;
-        p.vy *= 0.99;
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width)  p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-      });
-
-      // Connections
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const d = dist(particles[i], particles[j]);
-          if (d < 130) {
-            const a = 1 - d / 130;
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(${ACCENT.r},${ACCENT.g},${ACCENT.b},${a * 0.18})`;
-            ctx.lineWidth   = 0.7;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Dots
-      particles.forEach((p) => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${ACCENT.r},${ACCENT.g},${ACCENT.b},0.55)`;
-        ctx.fill();
-
-        // Glow
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        grad.addColorStop(0, `rgba(${ACCENT.r},${ACCENT.g},${ACCENT.b},0.15)`);
-        grad.addColorStop(1, "transparent");
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-      });
-
-      raf = requestAnimationFrame(draw);
-    }
-    draw();
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMove);
-    };
-  }, []);
-
-  return <canvas ref={ref} className="lp-canvas" />;
-}
-
-/* Features data  */
+/* Features data */
 const FEATURES = [
   { icon: "⚙️", title: "Automated Workflows", desc: "Streamline CI/CD pipelines and automate deployment tasks with intelligent orchestration." },
   { icon: "🔍", title: "Smart Monitoring", desc: "AI-driven insights for real-time infrastructure health, anomaly detection, and alerting." },
@@ -114,10 +13,27 @@ const FEATURES = [
   { icon: "🛠️", title: "Customizable Automation", desc: "Adapt workflows, triggers, and AI recommendations to fit your team's needs." },
 ];
 
-/* Component  */
+/* Theme Toggle Component */
+function ThemeToggle({ theme, setTheme }) {
+  return (
+    <button 
+      className="theme-toggle" 
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      aria-label="Toggle theme"
+    >
+      {theme === 'dark' ? '☀️' : '🌙'}
+    </button>
+  );
+}
+
+/* Component */
 export default function Landing() {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    // Get saved theme or default to dark
+    return localStorage.getItem('theme') || 'dark';
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -125,9 +41,15 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    // Apply theme to document
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   return (
     <div className="lp-root">
-      <ParticleCanvas />
+      <AIBackground theme={theme} intensity="medium" />
       <div className="lp-grain" />
       <div className="lp-glow-center" />
       <div className="lp-glow-bottom" />
@@ -135,10 +57,11 @@ export default function Landing() {
       {/* Navbar */}
       <nav className={`lp-nav ${scrolled ? "scrolled" : ""}`}>
         <div className="lp-logo">
-          Flux<span className="lp-logo-x">Ops</span>
+          Gen<span className="lp-logo-x">Ops</span>
           <span className="lp-logo-dot" />
         </div>
         <div className="lp-nav-links">
+          <ThemeToggle theme={theme} setTheme={setTheme} />
           <button className="lp-nav-login" onClick={() => navigate("/login")}>
             Sign In
           </button>
@@ -152,7 +75,7 @@ export default function Landing() {
       <section className="lp-hero">
         <div className="lp-badge">
           <span className="lp-badge-blink" />
-          Welcome to FluxOps - AI-Powered DevOps Intelligence
+          Welcome to GenOps - AI-Powered DevOps Intelligence
         </div>
 
         <h1 className="lp-title">
@@ -201,7 +124,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="lp-footer">
-        © {new Date().getFullYear()} FluxOps · Built with intent
+        © {new Date().getFullYear()} GenOps · Built with intent
       </footer>
     </div>
   );
