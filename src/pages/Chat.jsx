@@ -166,18 +166,6 @@ export default function Chat() {
 
   return (
     <div className="chat-root">
-      <button 
-        className="theme-toggle" 
-        onClick={() => {
-          const newTheme = theme === 'dark' ? 'light' : 'dark';
-          setTheme(newTheme);
-          localStorage.setItem('theme', newTheme);
-        }}
-        aria-label="Toggle theme"
-      >
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
-
       {sidebarOpen && (
         <div
           style={{ position: "fixed", inset: 0, zIndex: 199, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
