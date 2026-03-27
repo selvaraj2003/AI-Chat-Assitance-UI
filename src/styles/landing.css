@@ -1,69 +1,65 @@
-/* ══════════════════════════════════════
-   GOOGLE FONTS - Space Grotesk + Inter
-══════════════════════════════════════ */
+
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
-/* ══════════════════════════════════════
-   THEME SYSTEM - Dark & Light
-══════════════════════════════════════ */
 
-/* Dark Theme (softer, not too dark) */
+
+
 :root[data-theme="dark"] {
-  /* Backgrounds - lighter than typical dark mode */
+  
   --bg-void:      #1a1a24;
   --bg-deep:      #1f1f2e;
   --bg-surface:   #252538;
   --bg-raised:    #2d2d42;
   --bg-elevated:  #36364f;
 
-  /* Accent — electric cyan */
+  
   --accent:       #00e5ff;
   --accent-dim:   rgba(0, 229, 255, 0.15);
   --accent-glow:  rgba(0, 229, 255, 0.35);
 
-  /* Secondary — violet */
+  
   --violet:       #7c3aed;
   --violet-dim:   rgba(124, 58, 237, 0.2);
 
-  /* Text */
+  
   --text-1:  #f0f0ff;
   --text-2:  #a5a5c8;
   --text-3:  #7070a0;
 
-  /* Borders */
+  
   --border:       rgba(255, 255, 255, 0.1);
   --border-hover: rgba(0, 229, 255, 0.3);
 }
 
-/* Light Theme */
+
 :root[data-theme="light"] {
-  /* Backgrounds */
+  
   --bg-void:      #f8f9fc;
   --bg-deep:      #f0f2f8;
   --bg-surface:   #ffffff;
   --bg-raised:    #fafbfe;
   --bg-elevated:  #ffffff;
 
-  /* Accent — indigo */
+  
   --accent:       #6366f1;
   --accent-dim:   rgba(99, 102, 241, 0.1);
   --accent-glow:  rgba(99, 102, 241, 0.25);
 
-  /* Secondary — pink */
+  
   --violet:       #ec4899;
   --violet-dim:   rgba(236, 72, 153, 0.15);
 
-  /* Text */
+  
   --text-1:  #1e1e2e;
   --text-2:  #4a4a68;
   --text-3:  #7070a0;
 
-  /* Borders */
+  
   --border:       rgba(0, 0, 0, 0.08);
   --border-hover: rgba(99, 102, 241, 0.3);
 }
 
-/* Global font variables (same for both themes) */
+
 :root {
   --font-display: 'Space Grotesk', sans-serif;
   --font-body:    'Inter', sans-serif;
@@ -77,9 +73,7 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ══════════════════════════════════════
-   LANDING PAGE
-══════════════════════════════════════ */
+
 
 .lp-root {
   min-height: 100vh;
@@ -89,7 +83,7 @@
   transition: background 0.4s var(--ease);
 }
 
-/* ── AI Background canvas (reusable component) ─── */
+
 .ai-background {
   position: fixed;
   inset: 0;
@@ -97,7 +91,7 @@
   pointer-events: none;
 }
 
-/* ── Noise grain overlay ─── */
+
 .lp-grain {
   position: fixed;
   inset: 0;
@@ -115,7 +109,7 @@
   opacity: 0.2;
 }
 
-/* ── Radial vignette glow ─── */
+
 .lp-glow-center {
   position: fixed;
   top: 50%;
@@ -156,7 +150,7 @@
   background: radial-gradient(ellipse, rgba(236,72,153,0.08) 0%, transparent 70%);
 }
 
-/* ── Navbar ─────────────────────── */
+
 .lp-nav {
   position: fixed;
   top: 0;
@@ -258,7 +252,7 @@
   box-shadow: 0 0 20px var(--accent-glow);
 }
 
-/* ── Hero ───────────────────────── */
+
 .lp-hero {
   position: relative;
   z-index: 2;
@@ -398,7 +392,7 @@
   background: rgba(99,102,241,0.05);
 }
 
-/* ── Stats row ──────────────────── */
+
 .lp-stats {
   display: flex;
   gap: 3rem;
@@ -432,7 +426,7 @@
   transition: color 0.3s var(--ease);
 }
 
-/* ── Features grid ──────────────── */
+
 .lp-features {
   position: relative;
   z-index: 2;
@@ -499,7 +493,7 @@
   transition: color 0.3s var(--ease);
 }
 
-/* ── Footer ─────────────────────── */
+
 .lp-footer {
   position: relative;
   z-index: 2;
@@ -512,13 +506,13 @@
   transition: all 0.3s var(--ease);
 }
 
-/* ── Keyframes ──────────────────── */
+
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Responsive ─────────────────── */
+
 @media (max-width: 600px) {
   .lp-nav { padding: 1.2rem 4%; }
   .lp-hero { padding: 7rem 1.5rem 3rem; }
@@ -526,3 +520,4 @@
   .lp-stats { gap: 2rem; }
   .lp-features { padding: 4rem 4%; }
 }
+
